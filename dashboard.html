@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Личный кабинет</title>
+</head>
+<body>
+  <h1>Личный кабинет</h1>
+  <div id="info">Загрузка...</div>
+  <button onclick="logout()">Выйти</button>
+
+  <script>
+    const token = localStorage.getItem('token')
+    const info = document.getElementById('info')
+
+    if (!token) {
+      window.location.href = '/login.html'
+    } else {
+      fetch('https://redesigned-eureka-69w494764qx734w6g-6000.app.github.dev/me', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data?.email) {
+            info.textContent = `Привет, ${data.email}!`
+          } else {
+            localStorage.removeItem('token')
+            window.location.href = '/login.html'
+          }
+        })
+        .catch(() => {
+          info.textContent = 'Ошибка загрузки данных'
+        })
+    }
+
+    function logout() {
+      localStorage.removeItem('token')
+      window.location.href = '/login.html'
+    }
+  </script>
+</body>
+</html>
