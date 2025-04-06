@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Регистрация</title>
+</head>
+<body>
+  <h1>Регистрация</h1>
+  <form id="register-form">
+    <input type="email" placeholder="Email" name="email" required />
+    <input type="password" placeholder="Пароль" name="password" required />
+    <button type="submit">Зарегистрироваться</button>
+  </form>
+  <div id="message"></div>
+  
+  <button onclick="testConnection()">Проверить соединение</button>
+<div id="result"></div>
+
+<script>
+function testConnection() {
+  fetch('https://api-1rfq.onrender.com/')
+    .then(res => res.text())
+    .then(text => {
+      document.getElementById('result').innerText = '✅ Успешно подключено: ' + text
+    })
+    .catch(err => {
+      document.getElementById('result').innerText = '❌ Ошибка подключения: ' + err.message
+    })
+}
+
+</script>
+
+
+  <script>
+    const form = document.getElementById('register-form')
+    const msg = document.getElementById('message')
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault()
+      const formData = new FormData(form)
+      const email = formData.get('email')
+      const password = formData.get('password')
+
+      try {
+        const res = await fetch('https://redesigned-eureka-69w494764qx734w6g-3000.app.github.dev/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        })
+        const data = await res.json()
+        if (res.ok) {
+          msg.textContent = '✅ Код подтверждения отправлен на email!'
+          // Переход на страницу ввода кода
+          window.location.href = `/verify.html?email=${encodeURIComponent(email)}`
+        } else {
+          msg.textContent = '❌ Ошибка: ' + (data?.error || 'что-то пошло не так')
+        }
+      } catch (err) {
+        msg.textContent = '❌ Ошибка соединения с сервером'
+      }
+    })
+  </script>
+</body>
+</html>
