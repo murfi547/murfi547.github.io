@@ -13,6 +13,21 @@
   </form>
   <div id="message"></div>
 
+
+  
+<script>
+function testConnection() {
+  fetch('https://api-1rfq.onrender.com/')
+    .then(res => res.text())
+    .then(text => {
+      document.getElementById('result').innerText = '✅ Успешно подключено: ' + text
+    })
+    .catch(err => {
+      document.getElementById('result').innerText = '❌ Ошибка подключения: ' + err.message
+    })
+}
+
+</script>
   <script>
     const form = document.getElementById('login-form')
     const msg = document.getElementById('message')
