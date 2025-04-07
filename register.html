@@ -42,7 +42,7 @@ function testConnection() {
       const password = formData.get('password')
 
       try {
-        const res = await fetch('https://redesigned-eureka-69w494764qx734w6g-3000.app.github.dev/register', {
+        const res = await fetch('https://api-1rfq.onrender.com/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password })
