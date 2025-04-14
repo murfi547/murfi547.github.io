@@ -5,44 +5,35 @@
   <title>Подтверждение email</title>
 </head>
 <body>
-  <h1>Подтверждение email</h1>
-  <form id="verify-form">
-    <input type="text" placeholder="Код из email" name="code" required />
-    <button type="submit">Подтвердить</button>
-  </form>
-  <div id="message"></div>
-
   <script>
-    const form = document.getElementById('verify-form')
-    const msg = document.getElementById('message')
-    const urlParams = new URLSearchParams(window.location.search)
-    const email = urlParams.get('email')
+    const params = new URLSearchParams(window.location.search);
+const verified = params.get("verified");
+const clientId = params.get("client-id");
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault()
-      const code = form.code.value
+if (verified === "true" && clientId) {
+  // Проверяем статус верификации у сервера
+  fetch('https://vladapi.chatdevs.eu.org/api/getUserByID', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ id: clientId })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.user && data.user.verificated === 1) {
+      // Всё ок — редиректим на dashboard
+      window.location.href = `/dashboard?client-id=${clientId}`;
+    } else {
+      alert("User is not verified.");
+    }
+  })
+  .catch(error => {
+    console.error("Verification check failed:", error);
+    alert("Something went wrong.");
+  });
+}
 
-      try {
-        const res = await fetch('https://api-1rfq.onrender.com/verify', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, code })
-        })
-
-        const data = await res.json()
-
-        if (res.ok) {
-          msg.textContent = '✅ Email подтверждён!'
-          setTimeout(() => {
-            window.location.href = '/login.html'
-          }, 1500)
-        } else {
-          msg.textContent = '❌ Ошибка: ' + (data?.error || 'код неверный')
-        }
-      } catch (err) {
-        msg.textContent = '❌ Ошибка соединения'
-      }
-    })
   </script>
 </body>
 </html>
