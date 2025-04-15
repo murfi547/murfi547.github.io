@@ -1,44 +1,64 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <title>Личный кабинет</title>
+  <meta charset="UTF-8">
+  <title>Панель управления</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background-color: #f9f9f9;
+      color: #333;
+      text-align: center;
+    }
+    .loader {
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #4CAF50;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 30px auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .message {
+      font-size: 20px;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Личный кабинет</h1>
-  <div id="info">Загрузка...</div>
-  <button onclick="logout()">Выйти</button>
+  <h1>Панель управления</h1>
+  <div class="loader"></div>
+  <div class="message">Загрузка информации...</div>
 
   <script>
-    const token = localStorage.getItem('token')
-    const info = document.getElementById('info')
-
-    if (!token) {
-      window.location.href = '/login.html'
-    } else {
-      fetch('https://api-1rfq.onrender.com/me', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (data?.email) {
-            info.textContent = `Привет, ${data.email}!`
-          } else {
-            localStorage.removeItem('token')
-            window.location.href = '/login.html'
-          }
-        })
-        .catch(() => {
-          info.textContent = 'Ошибка загрузки данных'
-        })
-    }
-
-    function logout() {
-      localStorage.removeItem('token')
-      window.location.href = '/login.html'
-    }
+    // Получаем текущего пользователя по токену
+    fetch('https://animated-potato-wrxgrgj6gq56hgwwj-3000.app.github.dev/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'action': 'me'
+      },
+      credentials: 'include'
+    })
+    .then(res => res.json())
+    .then(data => {
+      document.querySelector('.loader').style.display = 'none';
+      if (data.user) {
+        document.querySelector('.message').textContent = `Добро пожаловать, ${data.user.name} (${data.user.email})`;
+      } else {
+        document.querySelector('.message').textContent = 'Ошибка: пользователь не найден.';
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      document.querySelector('.loader').style.display = 'none';
+      document.querySelector('.message').textContent = 'Ошибка при загрузке данных.';
+    });
   </script>
 </body>
 </html>
