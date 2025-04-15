@@ -12,10 +12,11 @@ const clientId = params.get("client-id");
 
 if (verified === "true" && clientId) {
   // Проверяем статус верификации у сервера
-  fetch('https://vladapi.chatdevs.eu.org/api/getUserByID', {
+  fetch('https://animated-potato-wrxgrgj6gq56hgwwj-3000.app.github.dev/', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'action': 'getUserByID'
     },
     body: JSON.stringify({ id: clientId })
   })
